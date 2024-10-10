@@ -23,5 +23,5 @@ class Person(Base):
     person_name = Column(String)
     person_surname = Column(String)
     person_patronimic = Column(String)
-    person_age = Column(Integer)
+    person_age = Column(Integer, autoincrement=False)
     person_phone = Column(String)

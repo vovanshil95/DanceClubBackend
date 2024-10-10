@@ -14,5 +14,5 @@ class Training_sign(Base):
 
     __tablename__ = 'person'
     sign_id = Column(UUID, primary_key=True)
-    training_id = Column(Integer)
-    person_id = Column(Integer)
+    training_id = Column(Integer, autoincrement=False, nullable=False)
+    person_id = Column(Integer, autoincrement=False, nullable=False)
