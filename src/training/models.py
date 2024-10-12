@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, String, UUID, TIMESTAMP, Float, Integer
-from database import Base
+from person.models import Base
 
 class Training(Base):
     def __init__(self,
@@ -21,7 +21,7 @@ class Training(Base):
         self.training_space = training_space
         self.training_free_space = training_free_space
 
-    __tablename__ = 'person'
+    __tablename__ = 'training'
     training_id = Column(UUID, primary_key=True)
     training_name = Column(String)
     training_description = Column(String)
