@@ -39,8 +39,8 @@ def upgrade() -> None:
     )
     op.create_table('training_sign',
     sa.Column('sign_id', sa.UUID(), nullable=False),
-    sa.Column('training_id', sa.Integer(), nullable=True),
-    sa.Column('person_id', sa.Integer(), nullable=True),
+    sa.Column('training_id', sa.UUID(), nullable=True),
+    sa.Column('person_id', sa.UUID(), nullable=True),
     sa.PrimaryKeyConstraint('sign_id')
     )
     # ### end Alembic commands ###
