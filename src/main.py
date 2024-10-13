@@ -8,7 +8,8 @@ from person.routers import router as person_router
 
 from config import ORIGINS
 
-app = FastAPI()
+app = FastAPI(title='DanceClub API',
+              description='here is backend')
 
 app.add_middleware(
     CORSMiddleware,
