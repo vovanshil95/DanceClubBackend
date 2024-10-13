@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, String, UUID, TIMESTAMP, Float, Integer
+from sqlalchemy import Column, String, UUID, Integer
 from database import Base
 
 class Person(Base):
