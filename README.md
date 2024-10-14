@@ -14,8 +14,12 @@
 - [Команда проекта](#команда-проекта)
 
 ## Технологии
-- Python 3
-- 
+- Python 3.11
+- PostgreSQL (psql) - основная СУБД
+- Docker
+- Unicorn (FastAPI)
+- Alembic
+- asyncio 
 
 ## Использование
 
@@ -23,13 +27,64 @@
 [Документация](http://195.54.178.243:25433/docs) по проекту сделана с помощью Swagger.
 
 ### Запуск
-..
+Для запуска сервера необходимо выполнить следующие шаги:
+
+Установка зависимостей сервера
+```shell
+apt-get update && apt-get install -y nohup
+sudo apt install python3-venv
+curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+```
+
+Запуск Docker-контейнера с PostgreSQL
+```shell
+sudo docker run -d \
+  --name dance-club-db \
+  -e POSTGRES_DB=dance_club_db \
+  -e POSTGRES_USER=dance_club_user \
+  -e POSTGRES_PASSWORD={ваш пароль от бд} \
+  -p 5432:5432 \
+  postgres
+```
+
+Создание файла .env
+```shell
+echo "DB_NAME=dance_club_db" >> .env
+echo "DB_USER=dance_club_user" >> .env
+echo "DB_PASS={ваш пароль от бд}" >> .env
+echo "DB_PORT=5432" >> .env
+echo "DB_HOST=localhost" >> .env
+echo "ORIGINS={ip вашего frontend сервера}" >> .env
+```
+
+Создание и активация виртуального окружения
+```shell
+python -m venv venv
+source venv/bin/activate
+```
+
+Установка зависимостей pip
+```shell
+pip install -r requirements.txt
+```
+
+Обновление сущностей в бд
+```shell
+alembic upgrade head
+```
+
+Запуск приложения
+```shell
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1 &
+```
 
 ### Разработка
 Необходимые для работы проекта библиотеки и их версии перечислены в [файле версий](/requirements.txt).
 Основное:
-- Python 3
-- 
+- Python 3.11
+- PostgreSQL (psql)
+- Docker
+- FastAPI
 
 ## Deploy и CI/CD
 ..
