@@ -1,0 +1,23 @@
+name: deploy
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy_to_server:  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to server and pull
+        if: github.event.pull_request.merged == true
+        run: |
+          sshpass -p ${{ secrets.SERVER_PASS }} ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} -p ${{ secrets.SERVER_PORT }} << EOF
+          cd DanceClubBackend
+          git pull
+          source venv/bin/activate
+          pip install -r requirements.txt
+          alembic upgrade head
+          cd src
+          pgrep uvicorn | xargs kill
+          nohup uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1 &
