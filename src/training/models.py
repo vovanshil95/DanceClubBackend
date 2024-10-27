@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, String, UUID, TIMESTAMP, Integer
-from person.models import Base
+from auth.models import Base
 
 class Training(Base):
     def __init__(self,
