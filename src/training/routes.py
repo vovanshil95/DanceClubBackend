@@ -8,6 +8,9 @@ from training.schemas import TrainingsResponse
 from training.schemas import Training as TrainingSchema
 from database import get_async_session
 from utils import BaseResponse
+from auth.utils import AccessTokenPayload
+from auth.routers import get_access_token 
+
 
 import datetime
 import time
@@ -52,18 +55,21 @@ async def get_future_trainings(session: AsyncSession=Depends(get_async_session))
 
 
 @router.get('/signed')
-async def get_signed_trainings(person_id: uuid.UUID, session: AsyncSession=Depends(get_async_session)  ) -> TrainingsResponse:
+async def get_signed_trainings(access_token: AccessTokenPayload=Depends(get_access_token),
+                               session: AsyncSession=Depends(get_async_session)  ) -> TrainingsResponse:
 
     traings_data = (await session.execute(select(Training)
                     .join(TrainingSign)
                     .where(and_(Training.training_date > datetime.datetime.now(),
-                                TrainingSign.person_id == person_id)))).scalars().all()
+                                TrainingSign.person_id == access_token.id)))).scalars().all()
 
     return TrainingsResponse(trainings=[training_convert(t) for t in traings_data])
 
 
 @router.post('/add')
-async def add_training(training: TrainingSchema, session: AsyncSession=Depends(get_async_session)) -> BaseResponse:
+async def add_training(training: TrainingSchema,
+                       access_token: AccessTokenPayload=Depends(get_access_token),
+                       session: AsyncSession=Depends(get_async_session)) -> BaseResponse:
 
     session.add(training_back_convert(training))
     await session.commit()

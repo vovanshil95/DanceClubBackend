@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from person.models import Person
 from person.schemas import Person as PersonSchema, PersonsResponse
 from database import get_async_session
-from utils import BaseResponse
+from auth.routers import get_access_token
+from auth.utils import AccessTokenPayload
 
 
 router = APIRouter(prefix='/person',
@@ -21,29 +23,12 @@ def person_convert(person_data: Person) -> PersonSchema:
         phone=person_data.person_phone
     )
 
-
-def person_back_convert(person_shema: PersonSchema) -> Person:
-    return Person(
-        person_id=person_shema.id,
-        person_name=person_shema.name,
-        person_surname=person_shema.surname,
-        person_patronimic=person_shema.patronimic,
-        person_age=person_shema.age,
-        person_phone=person_shema.phone
-    )
-
-
-@router.post('/add')
-async def add_person(person: PersonSchema, session: AsyncSession=Depends(get_async_session)  ) -> BaseResponse:
-
-    session.add(person_back_convert(person))
-    await session.commit()
-
-    return BaseResponse()
-
-
 @router.get('/all')
-async def add_person(session: AsyncSession=Depends(get_async_session)  ) -> PersonsResponse:
+async def add_person(access_token: AccessTokenPayload=Depends(get_access_token),
+                     session: AsyncSession=Depends(get_async_session)) -> PersonsResponse:
+
+    if not access_token.super_user:
+        raise HTTPException(status_code=403, detail='forbidden')
 
     persons = (await session.execute(select(Person))).scalars().all()
     persons = [person_convert(person) for person in persons]
