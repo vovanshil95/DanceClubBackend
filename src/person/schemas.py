@@ -23,6 +23,7 @@ class Person(BaseModel):
     patronimic: str
     age: int
     phone: str
+    picture: str
 
 
 class PersonResponse(BaseResponse):

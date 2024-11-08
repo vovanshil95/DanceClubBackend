@@ -292,7 +292,8 @@ async def register(new_user: NewUser,
             surname=new_user.surname,
             patronimic=new_user.patronimic,
             age=new_user.age,
-            phone=new_user.phone
+            phone=new_user.phone,
+            picture=new_user.picture
         ),
         tokens=jwt_tokens
     )
