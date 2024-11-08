@@ -265,7 +265,8 @@ async def register(new_user: NewUser,
                        person_age=new_user.age,
                        person_patronimic=new_user.patronimic,
                        person_phone=new_user.phone,
-                       super_user=False))
+                       super_user=False,
+                       picture=new_user.picture))
     
     await session.commit()
     session.add(Auth(
@@ -291,7 +292,8 @@ async def register(new_user: NewUser,
             surname=new_user.surname,
             patronimic=new_user.patronimic,
             age=new_user.age,
-            phone=new_user.phone
+            phone=new_user.phone,
+            picture=new_user.picture
         ),
         tokens=jwt_tokens
     )

@@ -12,12 +12,20 @@ class Training(BaseModel):
     date: int
     status: int
     space: int
-    freeSpace: str
+    freeSpace: int
+
+
+class NewTraining(BaseModel):
+    name: str
+    description: str
+    date: int
+    status: int
+    space: int
+
 
 class TrainingsResponse(BaseResponse):
     trainings: list[Training]
 
-# class NewTemplate(BaseModel):
-#     templateId: uuid.UUID
-#     title: str
-#     newAnswers: list[NewAnswer]
+
+class TrainingResponse(BaseResponse):
+    training: Training

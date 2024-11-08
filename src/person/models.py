@@ -11,7 +11,8 @@ class Person(Base):
                  person_patronimic: str,
                  person_age: int,
                  person_phone: str,
-                 super_user: bool):
+                 super_user: bool,
+                 picture: str):
         self.person_id = person_id
         self.person_name = person_name
         self.person_surname = person_surname
@@ -19,6 +20,7 @@ class Person(Base):
         self.person_age = person_age
         self.person_phone = person_phone
         self.super_user = super_user
+        self.picture = picture
 
     __tablename__ = 'person'
     person_id = Column(UUID, primary_key=True)
@@ -28,3 +30,4 @@ class Person(Base):
     person_age = Column(Integer)
     person_phone = Column(String)
     super_user = Column(BOOLEAN)
+    picture = Column(String)

@@ -20,7 +20,8 @@ def person_convert(person_data: Person) -> PersonSchema:
         surname=person_data.person_surname,
         patronimic=person_data.person_patronimic,
         age=person_data.person_age,
-        phone=person_data.person_phone
+        phone=person_data.person_phone,
+        picture=person_data.picture
     )
 
 @router.get('/all')
