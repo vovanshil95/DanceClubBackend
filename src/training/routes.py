@@ -68,12 +68,21 @@ async def get_future_trainings(session: AsyncSession=Depends(get_async_session))
 async def get_signed_trainings(access_token: AccessTokenPayload=Depends(get_access_token),
                                session: AsyncSession=Depends(get_async_session)) -> TrainingsResponse:
 
-    traings_data = (await session.execute(select(Training)
-                    .join(TrainingSign)
-                    .where(and_(Training.training_date > datetime.datetime.now(),
-                                TrainingSign.person_id == access_token.id)))).scalars().all()
+    query = (
+        select(Training,
+               func.count(TrainingSign.person_id).label('training_sings'))
+        .outerjoin(TrainingSign, Training.training_id == TrainingSign.training_id)
+        .where(Training.training_date > datetime.datetime.now())
+        .group_by(Training.training_id)
+        .order_by(Training.training_date)
+    )
 
-    return TrainingsResponse(trainings=[training_convert(t) for t in traings_data])
+    trainings_data = (await session.execute(query)).all()
+    training_ids = (await session.execute(select(TrainingSign.training_id)
+                                         .where(TrainingSign.person_id == access_token.id))).scalars().all()
+    
+
+    return TrainingsResponse(trainings=[training_convert(tr, signs) for tr, signs in trainings_data if tr.training_id in training_ids])
 
 
 @router.post('/add')
