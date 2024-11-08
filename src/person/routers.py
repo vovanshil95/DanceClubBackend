@@ -28,9 +28,6 @@ def person_convert(person_data: Person) -> PersonSchema:
 async def add_person(access_token: AccessTokenPayload=Depends(get_access_token),
                      session: AsyncSession=Depends(get_async_session)) -> PersonsResponse:
 
-    # if not access_token.super_user:
-    #     raise HTTPException(status_code=403, detail='forbidden')
-
     persons = (await session.execute(select(Person))).scalars().all()
     persons = [person_convert(person) for person in persons]
 

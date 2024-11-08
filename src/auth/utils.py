@@ -20,10 +20,8 @@ class AccessTokenPayload(BaseModel):
     super_user: bool
 
 
-async def check_user_agent(user_agent: str = Header(...)):
-    if user_agent is None:
-        raise HTTPException(status_code=400, detail='error: User-Agent required')
-    return user_agent
+async def check_user_agent():
+    return 'AndroidUser'
 
 
 def encrypt(string: str | bytes) -> bytes:
@@ -58,5 +56,5 @@ def validate_phone(phone):
 
 
 def validate_password(password):
-    pattern = re.compile(r'^(?=.*\d)(?=.*[a-zA-Z]).{8,}$')
+    pattern = re.compile(r'^(?=.*\d)(?=.*[a-zA-Zа-яА-Я]).{8,}$')
     return bool(pattern.match(password))
