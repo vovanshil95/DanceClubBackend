@@ -56,5 +56,5 @@ def validate_phone(phone):
 
 
 def validate_password(password):
-    pattern = re.compile(r'^(?=.*\d)(?=.*[a-zA-Z]).{8,}$')
+    pattern = re.compile(r'^(?=.*\d)(?=.*[a-zA-Zа-яА-Я]).{8,}$')
     return bool(pattern.match(password))
