@@ -13,6 +13,7 @@ class NewUser(BaseModel):
     age: int
     phone: str=DEFAULT_PHONE
     password: str
+    picture: str
 
 
 class Person(BaseModel):
