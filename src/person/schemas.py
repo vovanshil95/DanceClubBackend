@@ -10,10 +10,9 @@ class NewUser(BaseModel):
     name: str=None
     surname: str
     patronimic: str
-    age: int
+    birth_date: int
     phone: str=DEFAULT_PHONE
     password: str
-    picture: str
 
 
 class Person(BaseModel):
@@ -21,9 +20,8 @@ class Person(BaseModel):
     name: str
     surname: str
     patronimic: str
-    age: int
+    birth_date: int
     phone: str
-    picture: str | None
 
 
 class PersonResponse(BaseResponse):

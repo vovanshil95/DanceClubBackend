@@ -17,7 +17,7 @@ async def get_profile(session: AsyncSession, user_id: uuid.UUID, user_agent: str
             name=person.person_name,
             surname=person.person_surname,
             patronimic=person.person_patronimic,
-            age=person.person_age,
+            birth_date=person.person_birth_date,
             phone=person.person_phone
         )
     )

@@ -1,7 +1,6 @@
-import uuid
-
 from sqlalchemy import Column, ForeignKey
 from training.models import Base
+from person.models import Base
 
 class TrainingSign(Base):
     def __init__(self,

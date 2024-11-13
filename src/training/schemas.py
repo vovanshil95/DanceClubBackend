@@ -13,14 +13,18 @@ class Training(BaseModel):
     status: int
     space: int
     freeSpace: int
+    price: int
+    trainerName: str
+    trainerDescriptions: str
 
 
 class NewTraining(BaseModel):
-    name: str
-    description: str
+    directionId: uuid.UUID
     date: int
     status: int
     space: int
+    price: int
+    trainerId: uuid.UUID
 
 
 class TrainingsResponse(BaseResponse):
