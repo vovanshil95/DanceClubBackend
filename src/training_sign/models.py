@@ -1,5 +1,3 @@
-import uuid
-
 from sqlalchemy import Column, ForeignKey
 from training.models import Base
 

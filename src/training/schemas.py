@@ -13,6 +13,9 @@ class Training(BaseModel):
     status: int
     space: int
     freeSpace: int
+    price: int
+    trainerName: str
+    trainerDescriptions: str
 
 
 class NewTraining(BaseModel):
@@ -21,6 +24,10 @@ class NewTraining(BaseModel):
     date: int
     status: int
     space: int
+    price: int
+    trainerName: str
+    trainerDescriptions: str
+    
 
 
 class TrainingsResponse(BaseResponse):

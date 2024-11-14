@@ -258,15 +258,16 @@ async def register(new_user: NewUser,
     person_id = uuid.uuid4()
     auth_id = uuid.uuid4()
     encoded_password, salt = generate_salted_password(password=new_user.password)
+    birth_date_raw = new_user.birth_date
+    new_user.birth_date = datetime.fromtimestamp(new_user.birth_date)
 
     session.add(Person(person_id=person_id,
                        person_name=new_user.name,
                        person_surname=new_user.surname,
-                       person_age=new_user.age,
+                       person_birth_date=new_user.birth_date,
                        person_patronimic=new_user.patronimic,
                        person_phone=new_user.phone,
-                       super_user=False,
-                       picture=new_user.picture))
+                       super_user=False))
     
     await session.commit()
     session.add(Auth(
@@ -284,6 +285,8 @@ async def register(new_user: NewUser,
         password=new_user.password,
         user_agent=user_agent
     )
+    
+    new_user.birth_date = birth_date_raw
 
     return PersonTokens(
         person=PersonSchema(
@@ -291,9 +294,8 @@ async def register(new_user: NewUser,
             name=new_user.name,
             surname=new_user.surname,
             patronimic=new_user.patronimic,
-            age=new_user.age,
+            birth_date=new_user.birth_date,
             phone=new_user.phone,
-            picture=new_user.picture
         ),
         tokens=jwt_tokens
     )
