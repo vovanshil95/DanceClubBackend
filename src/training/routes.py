@@ -21,6 +21,8 @@ from auth.routers import get_access_token
 import datetime
 import time
 import uuid
+import logging
+
 
 
 router = APIRouter(prefix='/training',
@@ -42,7 +44,7 @@ def training_convert(training_data: Training, signs: int, trainer_name, trainer_
     )
 
 
-def training_back_convert(training_schema: TrainingSchema) -> Training:
+""" def training_back_convert(training_schema: TrainingSchema) -> Training:
     return Training(
         training_id=training_schema.id,
         trainer_id=training_schema.name,
@@ -51,8 +53,7 @@ def training_back_convert(training_schema: TrainingSchema) -> Training:
         training_status=training_schema.status,
         training_space=training_schema.space,
         training_price=training_schema.price,
-        trainer_id=training_schema.trainerId
-    )
+    )"""
 
 
 @router.get('/all')
@@ -66,12 +67,14 @@ async def get_future_trainings(session: AsyncSession=Depends(get_async_session))
                Direction.direction_name,
                Direction.direction_description)
         .outerjoin(TrainingSign, Training.training_id == TrainingSign.training_id)
-        .outherjoin(Trainer, Training.trainer_id == Trainer.trainer_id)
-        .outherjoin(Direction, Training.direction_id == Direction.trainer_id)
+        .outerjoin(Trainer, Training.trainer_id == Trainer.trainer_id)
+        .outerjoin(Direction, Training.direction_id == Direction.direction_id)
         .where(Training.training_date > datetime.datetime.now())
-        .group_by(Training.training_id)
+        .group_by(Training.training_id, Trainer.trainer_name, Trainer.trainer_description, Direction.direction_name, Direction.direction_description) 
         .order_by(Training.training_date)
     )
+    
+    
 
     trainings_data = (await session.execute(query)).all()
 
@@ -91,10 +94,10 @@ async def get_signed_trainings(access_token: AccessTokenPayload=Depends(get_acce
                Direction.direction_name,
                Direction.direction_description)
         .outerjoin(TrainingSign, Training.training_id == TrainingSign.training_id)
-        .outherjoin(Trainer, Training.trainer_id == Trainer.trainer_id)
-        .outherjoin(Direction, Training.direction_id == Direction.trainer_id)
+        .outerjoin(Trainer, Training.trainer_id == Trainer.trainer_id)
+        .outerjoin(Direction, Training.direction_id == Direction.direction_id)
         .where(Training.training_date > datetime.datetime.now())
-        .group_by(Training.training_id)
+        .group_by(Training.training_id, Trainer.trainer_name, Trainer.trainer_description, Direction.direction_name, Direction.direction_description) 
         .order_by(Training.training_date)
     )
 
@@ -114,14 +117,41 @@ async def add_training(training: NewTraining,
                        session: AsyncSession=Depends(get_async_session)) -> TrainingResponse:
 
     training_id = uuid.uuid4()
+    
+    trainer_id = (await session.execute(select(Trainer.trainer_id)
+                                   .where(Trainer.trainer_name == training.trainerName))).scalar()
+
+
+    if trainer_id is None:
+        trainer_id = uuid.uuid4()
+        session.add(Trainer(trainer_id=trainer_id,
+                            trainer_name=training.trainerName,
+                            trainer_description=training.trainerDescriptions))
+        await session.commit()
+        
+        
+    direction_id = (await session.execute(select(Direction.direction_id)
+                                   .where(Direction.direction_name == training.name))).scalar()
+    if direction_id is None:
+        direction_id = uuid.uuid4()
+        session.add(Direction(direction_id=direction_id,
+                              direction_name=training.name,
+                              direction_description=training.description))
+        await session.commit()
 
     training_date_raw = training.date
     training.date = datetime.datetime.fromtimestamp(training.date)
+    
+    session.add(Training(training_id=training_id,
+                         trainer_id=trainer_id,
+                         direction_id=direction_id,
+                         training_date=training.date,
+                         training_status=training.status,
+                         training_space=training.space,
+                         training_price=training.price))
 
-    session.add(Training(
-        *([training_id] + list(training.dict().values()))
-    ))
     await session.commit()
+    
 
     training.date = training_date_raw
     

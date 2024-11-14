@@ -19,12 +19,15 @@ class Training(BaseModel):
 
 
 class NewTraining(BaseModel):
-    directionId: uuid.UUID
+    name: str
+    description: str
     date: int
     status: int
     space: int
     price: int
-    trainerId: uuid.UUID
+    trainerName: str
+    trainerDescriptions: str
+    
 
 
 class TrainingsResponse(BaseResponse):

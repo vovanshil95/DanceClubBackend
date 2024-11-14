@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy import Column, LargeBinary, ForeignKey, UUID, TIMESTAMP, String
 
-from database import Base
+from person.models import Base
 
 class Auth(Base):
     def __init__(self,

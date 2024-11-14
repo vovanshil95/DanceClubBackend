@@ -2,7 +2,6 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, UUID, TIMESTAMP, Integer, ForeignKey
-from direction.models import Base
 from trainer.models import Base
 
 class Training(Base):

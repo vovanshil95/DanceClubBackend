@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, String, UUID
-from database import Base
+from auth.models import Base
 
 class Direction(Base):
     def __init__(self,

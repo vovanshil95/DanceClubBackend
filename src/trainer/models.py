@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, String, UUID
-from database import Base
+from direction.models import Base
 
 class Trainer(Base):
     def __init__(self,

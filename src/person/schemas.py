@@ -5,6 +5,7 @@ from config import DEFAULT_PHONE
 
 from typing import List
 import uuid
+import datetime
 
 class NewUser(BaseModel):
     name: str=None
@@ -20,7 +21,7 @@ class Person(BaseModel):
     name: str
     surname: str
     patronimic: str
-    birth_date: int
+    birth_date: datetime.datetime
     phone: str
 
 

@@ -19,7 +19,7 @@ def person_convert(person_data: Person) -> PersonSchema:
         name=person_data.person_name,
         surname=person_data.person_surname,
         patronimic=person_data.person_patronimic,
-        bitth_date=person_data.person_birth_date,
+        birth_date=person_data.person_birth_date,
         phone=person_data.person_phone,
     )
 

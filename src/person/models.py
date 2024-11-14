@@ -3,7 +3,6 @@ import uuid
 
 from sqlalchemy import Column, String, UUID, TIMESTAMP, BOOLEAN
 from database import Base
-
 class Person(Base):
     def __init__(self,
                  person_id: uuid.UUID,
