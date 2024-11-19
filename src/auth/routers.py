@@ -246,7 +246,7 @@ async def change_password(passwords: Passwords,
 async def register(new_user: NewUser,
                    user_sign: UserSign=Depends(check_new_user),
                    user_agent: str=Depends(check_user_agent),
-                   session: AsyncSession=Depends(get_async_session)):
+                   session: AsyncSession=Depends(get_async_session)) -> PersonTokens:
     
     if not validate_phone(new_user.phone):
         raise HTTPException(status_code=400, detail='incorrect phone number format')
