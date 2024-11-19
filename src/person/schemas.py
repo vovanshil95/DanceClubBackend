@@ -31,3 +31,7 @@ class PersonResponse(BaseResponse):
 
 class PersonsResponse(BaseResponse):
     persons: List[Person]
+
+
+class ProfilePicture(BaseModel):
+    data: bytes

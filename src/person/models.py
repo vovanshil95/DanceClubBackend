@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column, String, UUID, TIMESTAMP, BOOLEAN
+from sqlalchemy import Column, String, UUID, TIMESTAMP, BOOLEAN, LargeBinary, ForeignKey
 from database import Base
 class Person(Base):
     def __init__(self,
@@ -28,3 +28,16 @@ class Person(Base):
     person_birth_date = Column(TIMESTAMP)
     person_phone = Column(String)
     super_user = Column(BOOLEAN)
+
+
+class Picture(Base):
+    def __init__(self,
+                 user_id: uuid.UUID,
+                 data: bytes):
+        self.user_id = user_id
+        self.data = data
+
+    __tablename__ = 'profile_picture'
+
+    user_id = Column(ForeignKey('person.person_id', ondelete='cascade'), primary_key=True)
+    data = Column(LargeBinary, nullable=False)
