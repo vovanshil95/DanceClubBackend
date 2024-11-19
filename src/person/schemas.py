@@ -21,7 +21,7 @@ class Person(BaseModel):
     name: str
     surname: str
     patronimic: str
-    birth_date: datetime.datetime
+    birth_date: int
     phone: str
 
 
