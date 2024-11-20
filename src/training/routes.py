@@ -29,7 +29,12 @@ router = APIRouter(prefix='/training',
                    tags=['training'])
 
 
-def training_convert(training_data: Training, signs: int, trainer_name, trainer_description, directionName, directionDescription) -> TrainingSchema:
+def training_convert(training_data: Training,
+                     signs: int,
+                     trainer_name: str,
+                     trainer_description: str,
+                     directionName: str,
+                     directionDescription: str) -> TrainingSchema:
     return TrainingSchema(
         id=training_data.training_id,
         name=directionName,
@@ -39,21 +44,10 @@ def training_convert(training_data: Training, signs: int, trainer_name, trainer_
         space=training_data.training_space,
         freeSpace=max(0, training_data.training_space - signs),
         price = training_data.training_price,
+        trainerId=training_data.trainer_id,
         trainerName = trainer_name,
         trainerDescriptions=trainer_description
     )
-
-
-""" def training_back_convert(training_schema: TrainingSchema) -> Training:
-    return Training(
-        training_id=training_schema.id,
-        trainer_id=training_schema.name,
-        training_description = training_schema.description,
-        training_date=datetime.datetime.fromtimestamp(training_schema.date),
-        training_status=training_schema.status,
-        training_space=training_schema.space,
-        training_price=training_schema.price,
-    )"""
 
 
 @router.get('/all')
