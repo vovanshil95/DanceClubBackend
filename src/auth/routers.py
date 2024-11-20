@@ -1,7 +1,9 @@
 import binascii
 import uuid
 from datetime import datetime, timedelta
+from typing import Tuple
 import re
+import time
 
 from pydantic import ValidationError
 from fastapi import APIRouter, Depends, HTTPException, Header, Request
@@ -101,7 +103,7 @@ def generate_access_token(user: Person) -> str:
 
 def get_new_tokens(user: Person,
                    user_agent: str,
-                   session: AsyncSession) -> JwtTokens:
+                   session: AsyncSession) -> Tuple[JwtTokens, Person]:
 
     refresh_token_id = uuid.uuid4()
 
@@ -114,13 +116,14 @@ def get_new_tokens(user: Person,
 
     tokens = JwtTokens(refreshToken=refresh_token,
                        accessToken=generate_access_token(user))
-    return tokens
+
+    return tokens, user
 
 
 async def login(session: AsyncSession,
                 phone: str,
                 password: str,
-                user_agent: str):
+                user_agent: str) -> Tuple[JwtTokens, Person]:
     user_auth = (await session.execute(select(Person, Auth)
                                   .join(Auth)
                                   .where(Person.person_phone == phone))).first()
@@ -139,23 +142,35 @@ async def login(session: AsyncSession,
                                     RefreshToken.user_agent == user_agent)))).scalar():
         await session.delete(token)
 
-    jwt_tokens = get_new_tokens(user, user_agent, session)
+    jwt_tokens, user = get_new_tokens(user, user_agent, session)
 
-    return jwt_tokens
+    return jwt_tokens, user
 
 
-@router.post('/login', responses={200: {'model': JwtTokens},
+@router.post('/login', responses={200: {'model': PersonTokens},
                                        400: {'model': BaseResponse, 'description': 'error: User-Agent required'},
                                        401: {'model': BaseResponse, 'description': 'incorrect username and password'}})
 async def login_route(credentials: Credentials,
                 session: AsyncSession=Depends(get_async_session),
-                user_agent: str=Depends(check_user_agent)) -> JwtTokens:
+                user_agent: str=Depends(check_user_agent)) -> PersonTokens:
     
-    jwt_tokens = await login(
+    jwt_tokens, user = await login(
         session=session,
         phone=credentials.phone,
         password=credentials.password,
         user_agent=user_agent
+    )
+
+    return PersonTokens(
+        person=PersonSchema(
+            id=user.person_id,
+            name=user.person_name,
+            surname=user.person_surname,
+            patronimic=user.person_patronimic,
+            birth_date=int(time.mktime(user.person_birth_date.timetuple())),
+            phone=user.person_phone,
+        ),
+        tokens=jwt_tokens
     )
 
     return jwt_tokens
@@ -192,7 +207,7 @@ async def give_new_tokens(refresh_token: RefreshToken=Depends(get_refresh_token)
     user = await session.get(Person, refresh_token.user_id)
     await session.delete(refresh_token)
 
-    new_tokens = get_new_tokens(user=user,
+    new_tokens, _ = get_new_tokens(user=user,
                                 user_agent=refresh_token.user_agent,
                                 session=session)
 
@@ -279,7 +294,7 @@ async def register(new_user: NewUser,
 
     await session.commit()
     
-    jwt_tokens = await login(
+    jwt_tokens, _ = await login(
         session=session,
         phone=new_user.phone,
         password=new_user.password,

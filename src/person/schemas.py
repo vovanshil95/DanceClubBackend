@@ -35,3 +35,9 @@ class PersonsResponse(BaseResponse):
 
 class ProfilePicture(BaseModel):
     data: bytes
+
+
+class ChangedPerson(BaseModel):
+    name: str
+    surname: str
+    patronimic: str
