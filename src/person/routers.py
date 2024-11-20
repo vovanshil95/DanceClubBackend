@@ -8,7 +8,8 @@ from person.schemas import ChangedPerson, PersonsResponse, PersonResponse
 from database import get_async_session
 from auth.routers import get_access_token
 from auth.utils import AccessTokenPayload
-from utils import BaseResponse
+from utils import BaseResponse, PictureResponse
+from utils import Picture as PictureSchema
 
 import time
 
@@ -38,23 +39,23 @@ async def add_person(access_token: AccessTokenPayload=Depends(get_access_token),
 
 @router.get('/picture')
 async def get_picture(access_token: AccessTokenPayload=Depends(get_access_token),
-                      session: AsyncSession=Depends(get_async_session)) -> bytes | None:
+                      session: AsyncSession=Depends(get_async_session)) -> PictureResponse:
     picture = await session.get(Picture, access_token.id)
     if picture is None:
-        return None
-    return picture.data
+        return PictureResponse(image=None)
+    return PictureResponse(image=picture.data)
 
 
 @router.put('/picture')
-async def change_picture(data: bytes = Body(...),
+async def add_picture(picture: PictureSchema,
                       access_token: AccessTokenPayload=Depends(get_access_token),
                       session: AsyncSession=Depends(get_async_session)) -> BaseResponse:
     
     if len((await session.execute(select(Picture.user_id).where(Picture.user_id == access_token.id))).all()) > 0:
-        stmt = update(Picture).where(Picture.user_id == access_token.id).values({'data': data})
+        stmt = update(Picture).where(Picture.user_id == access_token.id).values({'data': picture.image})
         session.not_awaited.append(session.execute(stmt))
     else:
-        session.add(Picture(user_id=access_token.id, data=data))
+        session.add(Picture(user_id=access_token.id, data=picture.image))
 
     return BaseResponse()
 
