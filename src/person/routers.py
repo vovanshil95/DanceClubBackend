@@ -3,7 +3,8 @@ from fastapi import HTTPException
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from person.models import Person, Picture
-from person.schemas import Person as PersonSchema, PersonsResponse
+from person.schemas import Person as PersonSchema
+from person.schemas import ChangedPerson, PersonsResponse, PersonResponse
 from database import get_async_session
 from auth.routers import get_access_token
 from auth.utils import AccessTokenPayload
@@ -56,3 +57,16 @@ async def get_picture(data: bytes = Body(...),
         session.add(Picture(user_id=access_token.id, data=data))
 
     return BaseResponse()
+
+
+@router.put('/profile')
+async def change_picture(change_person: ChangedPerson,
+                      access_token: AccessTokenPayload=Depends(get_access_token),
+                      session: AsyncSession=Depends(get_async_session)) -> PersonResponse:
+    
+    person = await session.get(Person, access_token.id)
+    person.person_name = change_person.name
+    person.person_surname = change_person.surname
+    person.person_patronimic = change_person.patronimic
+    
+    return PersonResponse(data=person_convert(person))
