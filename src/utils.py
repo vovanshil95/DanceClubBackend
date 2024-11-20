@@ -9,6 +9,14 @@ class BaseResponse(BaseModel):
     message: str='status success'
 
 
+class Picture(BaseModel):
+    image: bytes
+
+
+class PictureResponse(BaseResponse):
+    image: bytes | None
+
+
 def kill_port(port):
     try:
         if platform.system() == 'Windows':
