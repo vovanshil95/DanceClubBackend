@@ -14,6 +14,7 @@ class Training(BaseModel):
     space: int
     freeSpace: int
     price: int
+    trainerId: uuid.UUID
     trainerName: str
     trainerDescriptions: str
 
