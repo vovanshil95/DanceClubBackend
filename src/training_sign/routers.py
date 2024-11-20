@@ -17,7 +17,8 @@ router = APIRouter(prefix='/sign',
                    tags=['training_sign'])
 
 
-@router.post('/add', responses={200: {'model': BaseResponse, 'description': 'user is not authorized'},
+@router.post('/add', responses={200: {'model': BaseResponse, 'description': 'Successful Response'}
+                                403: {'model': BaseResponse, 'description': 'user is not authorized'},
                                 409: {'model': BaseResponse, 'description': 'user already signed to training'},
                                 404: {'model': BaseResponse, 'description': 'training doesnt exist'},
                                 400: {'model': BaseResponse, 'description': 'training has no free space'}})
