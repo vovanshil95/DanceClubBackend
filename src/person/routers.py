@@ -46,7 +46,7 @@ async def get_picture(access_token: AccessTokenPayload=Depends(get_access_token)
 
 
 @router.put('/picture')
-async def get_picture(data: bytes = Body(...),
+async def change_picture(data: bytes = Body(...),
                       access_token: AccessTokenPayload=Depends(get_access_token),
                       session: AsyncSession=Depends(get_async_session)) -> BaseResponse:
     
@@ -60,7 +60,7 @@ async def get_picture(data: bytes = Body(...),
 
 
 @router.put('/profile')
-async def change_picture(change_person: ChangedPerson,
+async def change_profile(change_person: ChangedPerson,
                       access_token: AccessTokenPayload=Depends(get_access_token),
                       session: AsyncSession=Depends(get_async_session)) -> PersonResponse:
     
