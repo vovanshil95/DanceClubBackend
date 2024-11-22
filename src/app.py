@@ -8,6 +8,7 @@ from training_sign.routers import router as sign_router
 from person.routers import router as person_router
 from auth.routers import router as auth_router
 from trainer.routers import router as trainer_router
+from admin.routers import router as admin_router
 from error_handlers import http_val_err_handler, http_all_err_handler
 from config import ORIGINS
 
@@ -28,6 +29,7 @@ app.include_router(sign_router)
 app.include_router(person_router)
 app.include_router(auth_router)
 app.include_router(trainer_router)
+app.include_router(admin_router)
 
 app.add_exception_handler(RequestValidationError, http_val_err_handler)
 app.add_exception_handler(HTTPException, http_all_err_handler)
